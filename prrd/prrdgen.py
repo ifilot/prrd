@@ -95,7 +95,6 @@ class prrdbase:
 		rrdtool.graph(img,
 			'--imgformat', 'PNG',
 			'-c', 'ARROW#000000',
-			'-x', 'HOUR:4:HOUR:12:DAY:1:0:%d',
 			'-Y',
 			'-u', '100',
 			'-r',
