@@ -24,6 +24,24 @@
 
 from prrd import prrdgen
 
-p = prrdgen.prrdbase()
-p.create_graph('load')
-p.create_graph('cpu')
+#
+# GRAPH TYPES
+# 
+# load - load average
+# cpu  - cpu usage (idle, user, etc.)
+#
+
+# construct object
+p = prrdgen.prrdbase('settings.json')
+
+# generate load graphs
+p.create_graph('load', 86400, 'load_day.png')
+p.create_graph('load', 86400 * 7, 'load_week.png')
+
+# generate cpu usage graphs
+p.create_graph('cpu', 86400, 'cpu_day.png')
+p.create_graph('cpu', 86400 * 7, 'cpu_week.png')
+
+# generate memory usage
+p.create_graph('memory', 86400, 'memory_day.png')
+p.create_graph('memory', 86400 * 7, 'memory_week.png')
