@@ -107,6 +107,7 @@ class prrdbase:
 			'VDEF:ltmax=lt,MAXIMUM',
 			'VDEF:ltavg=lt,AVERAGE',
 			"COMMENT:            Now      Min     Max     Avg\\n",
+			'AREA:st#AAFFAA',
 			'LINE1:st#FF0000:1 min ',
 			'GPRINT:stlast:%6.2lf',
 			'GPRINT:stmin:%6.2lf',
