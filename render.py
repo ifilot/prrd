@@ -45,3 +45,9 @@ p.create_graph('cpu', 86400 * 7, 'cpu_week.png')
 # generate memory usage
 p.create_graph('memory', 86400, 'memory_day.png')
 p.create_graph('memory', 86400 * 7, 'memory_week.png')
+
+# generate internet usage graphs
+interfaces = ['eno1', 'eth0', 'wlan0']
+for interface in interfaces:
+	p.graph_internet(86400, interface + '_day.png', interface)
+	p.graph_internet(86400 * 7, interface + '_week.png', interface)

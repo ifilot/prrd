@@ -26,6 +26,7 @@ import sys
 import socket 		# hostname
 import rrdtool
 import json
+import os.path
 from pprint import pprint
 
 ##
@@ -136,7 +137,6 @@ class prrdbase:
 		@return     void
 		"""
 		pathb = self.base_path + self.hostname + "/cpu-0"
-		img = 'cpu.png'
 		rrdtool.graph(imgfile,
 			'--imgformat', 'PNG',
 			'-c', 'ARROW#000000',
@@ -227,7 +227,6 @@ class prrdbase:
 		@return     void
 		"""
 		pathb = self.base_path + self.hostname + "/memory"
-		img = 'cpu.png'
 		rrdtool.graph(imgfile,
 			'--imgformat', 'PNG',
 			'-c', 'ARROW#000000',
@@ -238,39 +237,84 @@ class prrdbase:
 			'-v', 'Memory [bytes]',
 			'--width', str(self.width),
 			'--height', str(self.height),
-			'--start', "end - " + str(time),
-			'--end', "now",
+			'--start', 'end - ' + str(time),
+			'--end', 'now',
 			'--title', 'Memory::' + self.hostname,
 			'DEF:mem_buf=' + pathb + '/memory-buffered.rrd' + ':value:AVERAGE',
-	        'DEF:mem_cached=' + pathb + '/memory-cached.rrd' + ':value:AVERAGE',
-	        'DEF:mem_free=' + pathb + '/memory-free.rrd' + ':value:AVERAGE',
-	        'DEF:mem_used=' + pathb + '/memory-used.rrd' + ':value:AVERAGE',
-	        'CDEF:mem_buf_add=mem_buf,UN,0,mem_buf,IF,mem_used,+',
-	        'CDEF:mem_cached_add=mem_cached,UN,0,mem_cached,IF,mem_buf_add,+',
-	        'CDEF:mem_free_add=mem_free,UN,0,mem_free,IF,mem_cached_add,+',
-	        'TEXTALIGN:left',
-	        'AREA:mem_free_add#CCFFCC',
-	        'AREA:mem_cached_add#CCCCFF',
-	        'AREA:mem_buf_add#f3dfb7',
-	        'AREA:mem_used#FFCCCC',
-	        'LINE1:mem_free_add#00FF00:Free',
-	        'GPRINT:mem_free:AVERAGE:        %5.1lf%s Avg,',
-	        'GPRINT:mem_free:MIN:%5.1lf%s Min,',
-	        'GPRINT:mem_free:MAX:%5.1lf%s Max,',
-	        "GPRINT:mem_free:LAST:%5.1lf%s Last\\n",
-	        'LINE1:mem_cached_add#0000FF:Page cache',
-	        'GPRINT:mem_cached:AVERAGE:  %5.1lf%s Avg,',
-	        'GPRINT:mem_cached:MIN:%5.1lf%s Min,',
-	        'GPRINT:mem_cached:MAX:%5.1lf%s Max,',
-	        'GPRINT:mem_cached:LAST:%5.1lf%s Last',
-	        'LINE1:mem_buf_add#f0a000:Buffer cache',
-	        'GPRINT:mem_buf:AVERAGE:%5.1lf%s Avg,',
-	        'GPRINT:mem_buf:MIN:%5.1lf%s Min,',
-	        'GPRINT:mem_buf:MAX:%5.1lf%s Max,',
-	        "GPRINT:mem_buf:LAST:%5.1lf%s Last\\n",
-	        'LINE1:mem_used#FF0000:Used',
-	        'GPRINT:mem_used:AVERAGE:        %5.1lf%s Avg,',
-	        'GPRINT:mem_used:MIN:%5.1lf%s Min,',
-	        'GPRINT:mem_used:MAX:%5.1lf%s Max,',
-	        "GPRINT:mem_used:LAST:%5.1lf%s Last\\n")
-			
+			'DEF:mem_cached=' + pathb + '/memory-cached.rrd' + ':value:AVERAGE',
+			'DEF:mem_free=' + pathb + '/memory-free.rrd' + ':value:AVERAGE',
+			'DEF:mem_used=' + pathb + '/memory-used.rrd' + ':value:AVERAGE',
+			'CDEF:mem_buf_add=mem_buf,UN,0,mem_buf,IF,mem_used,+',
+			'CDEF:mem_cached_add=mem_cached,UN,0,mem_cached,IF,mem_buf_add,+',
+			'CDEF:mem_free_add=mem_free,UN,0,mem_free,IF,mem_cached_add,+',
+			'TEXTALIGN:left',
+			'AREA:mem_free_add#CCFFCC',
+			'AREA:mem_cached_add#CCCCFF',
+			'AREA:mem_buf_add#f3dfb7',
+			'AREA:mem_used#FFCCCC',
+			'LINE1:mem_free_add#00FF00:Free',
+			'GPRINT:mem_free:AVERAGE:        %5.1lf%s Avg,',
+			'GPRINT:mem_free:MIN:%5.1lf%s Min,',
+			'GPRINT:mem_free:MAX:%5.1lf%s Max,',
+			"GPRINT:mem_free:LAST:%5.1lf%s Last\\n",
+			'LINE1:mem_cached_add#0000FF:Page cache',
+			'GPRINT:mem_cached:AVERAGE:  %5.1lf%s Avg,',
+			'GPRINT:mem_cached:MIN:%5.1lf%s Min,',
+			'GPRINT:mem_cached:MAX:%5.1lf%s Max,',
+			'GPRINT:mem_cached:LAST:%5.1lf%s Last',
+			'LINE1:mem_buf_add#f0a000:Buffer cache',
+			'GPRINT:mem_buf:AVERAGE:%5.1lf%s Avg,',
+			'GPRINT:mem_buf:MIN:%5.1lf%s Min,',
+			'GPRINT:mem_buf:MAX:%5.1lf%s Max,',
+			"GPRINT:mem_buf:LAST:%5.1lf%s Last\\n",
+			'LINE1:mem_used#FF0000:Used',
+			'GPRINT:mem_used:AVERAGE:        %5.1lf%s Avg,',
+			'GPRINT:mem_used:MIN:%5.1lf%s Min,',
+			'GPRINT:mem_used:MAX:%5.1lf%s Max,',
+			"GPRINT:mem_used:LAST:%5.1lf%s Last\\n")
+
+	def graph_internet(self, time, imgfile, interface):
+		"""
+		@brief      generate memory usage graph
+		
+		@param      self  The object
+		@param      time  number of seconds in the past
+		@param      imgfile  url to image file
+		
+		@return     void
+		"""
+		pathb = self.base_path + self.hostname + "/interface-" + interface + "/if_octets.rrd"
+		if not os.path.isfile(pathb):
+			return
+		rrdtool.graph(imgfile,
+			'--imgformat', 'PNG',
+			'--width', str(self.width),
+			'--height', str(self.height),
+			'--start', 'end - ' + str(time),
+			'--end', 'now',
+			'-c', 'ARROW#000000',
+			'-Y',
+			'-r',
+			'-v Bytes/s',
+			'--title', interface + ' interface::' + self.hostname,
+			'DEF:rx_max=' + pathb + ':rx:MAX',
+			'DEF:rx_avg=' + pathb + ':rx:AVERAGE',
+			'DEF:tx_max=' + pathb + ':tx:MAX',
+			'DEF:tx_avg=' + pathb + ':tx:AVERAGE',
+			'CDEF:tx_avg_m=0,tx_avg,-',
+			'CDEF:tx_max_m=0,tx_max,-',
+			'VDEF:rx_total=rx_avg,TOTAL',
+			'VDEF:tx_total=tx_avg,TOTAL',
+			'AREA:rx_avg#CCFFCC',
+			'AREA:tx_avg_m#CCCCFF',
+			'TEXTALIGN:left',
+			'LINE1:rx_avg#00FF00:Incoming',
+			'GPRINT:rx_avg:AVERAGE:%5.1lf%s Avg,',
+			'GPRINT:rx_avg:MAX:%5.1lf%s Max,',
+			'GPRINT:rx_avg:LAST:%5.1lf%s Last',
+			'GPRINT:rx_total:(ca. %5.1lf%s Total)',
+			'LINE1:tx_avg_m#0000FF:Outgoing',
+			'GPRINT:tx_avg:AVERAGE:%5.1lf%s Avg,',
+			'GPRINT:tx_avg:MAX:%5.1lf%s Max,',
+			'GPRINT:tx_avg:LAST:%5.1lf%s Last',
+			'GPRINT:tx_total:(ca. %5.1lf%s Total)')
