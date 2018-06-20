@@ -105,3 +105,4 @@ venv.bak/
 
 # png files
 *.png
+run.sh
