@@ -51,3 +51,6 @@ interfaces = ['eno1', 'eth0', 'wlan0']
 for interface in interfaces:
 	p.graph_internet(86400, interface + '_day.png', interface)
 	p.graph_internet(86400 * 7, interface + '_week.png', interface)
+
+# generate temperature graphs
+p.create_graph('temperature', 86400 * 7, 'temperature_week.png')

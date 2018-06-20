@@ -73,6 +73,8 @@ class prrdbase:
 			self.graph_cpu(time, imgfile)
 		if type == 'memory':
 			self.graph_memory(time, imgfile)
+		if type == 'temperature':
+			self.graph_temperature(time, imgfile)
 
 	def graph_load(self, time, imgfile):
 		"""
@@ -318,3 +320,31 @@ class prrdbase:
 			'GPRINT:tx_avg:MAX:%5.1lf%s Max,',
 			'GPRINT:tx_avg:LAST:%5.1lf%s Last',
 			'GPRINT:tx_total:(ca. %5.1lf%s Total)')
+
+	def graph_temperature(self, time, imgfile):
+		pathb = self.base_path + self.hostname + '/curl-CpuTemp/temperature-CPUTemp_switchpi.rrd'
+		rrdtool.graph(imgfile,
+			'--imgformat', 'PNG',
+			'--width', str(self.width),
+			'--height', str(self.height),
+			'--start', 'end - ' + str(time),
+			'--end', 'now',
+			'-c', 'ARROW#000000',
+			'-Y',
+			'-r',
+			'-v Temperature',
+			'DEF:min=' + pathb + ':value:MIN',
+        		'DEF:avg=' + pathb + ':value:AVERAGE',
+        		'DEF:max=' + pathb + ':value:MAX',
+                        'CDEF:minc=min,1000,/',
+                        'CDEF:avgc=avg,1000,/',
+                        'CDEF:maxc=max,1000,/',
+                        'CDEF:ds_red=maxc,70,GT,maxc,UNKN,IF',
+                        'CDEF:ds_orange=maxc,50,GT,maxc,70,GT,70,maxc,IF,UNKN,IF',
+                        'CDEF:ds_green=maxc,50,GT,50,maxc,IF',
+                        'AREA:ds_red#FF4444',
+                        'LINE1:ds_red#FF0000',
+                        'AREA:ds_orange#FFD044',
+                        'LINE1:ds_orange#FFB000',
+                        'AREA:ds_green#CCFFCC',
+                        'LINE1:ds_green#00FF00')
