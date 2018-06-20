@@ -329,6 +329,7 @@ class prrdbase:
 			'--height', str(self.height),
 			'--start', 'end - ' + str(time),
 			'--end', 'now',
+			'--title', 'Temperature::' + self.hostname,
 			'-c', 'ARROW#000000',
 			'-Y',
 			'-r',
