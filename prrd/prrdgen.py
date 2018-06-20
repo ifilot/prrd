@@ -332,6 +332,8 @@ class prrdbase:
 			'-c', 'ARROW#000000',
 			'-Y',
 			'-r',
+			'-l', '30',
+			'-u', '80',
 			'-v Temperature',
 			'DEF:min=' + pathb + ':value:MIN',
         		'DEF:avg=' + pathb + ':value:AVERAGE',
