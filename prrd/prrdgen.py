@@ -325,6 +325,9 @@ class prrdbase:
 
 	def graph_temperature(self, time, imgfile):
 		pathb = self.base_path + self.hostname + '/curl-CpuTemp/temperature-CPUTemp_switchpi.rrd'
+		if not os.path.isfile(pathb):
+			return
+		
 		rrdtool.graph(imgfile,
 			'--imgformat', 'PNG',
 			'--width', str(self.width),
@@ -379,7 +382,7 @@ class prrdbase:
 			'AREA:cdef-reserved#bfbfff',
 			'AREA:cdef-used#FFCCCC',
 			'LINE1:cdef-free#00FF00:Free',
-			'GPRINT:free:AVERAGE:        %5.1lf%s Avg,',
+			'GPRINT:free:AVERAGE:       %5.1lf%s Avg,',
 			'GPRINT:free:MIN:%5.1lf%s Min,  ',
 			'GPRINT:free:MAX:%5.1lf%s Max,',
 			'GPRINT:free:LAST:%5.1lf%s Last\n',
