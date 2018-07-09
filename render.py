@@ -54,3 +54,6 @@ for interface in interfaces:
 
 # generate temperature graphs
 p.create_graph('temperature', 86400 * 7, 'temperature_week.png')
+
+# generate disk space for 100 days
+p.create_graph('diskspace', 86400 * 100, 'disk_root_100days.png')
