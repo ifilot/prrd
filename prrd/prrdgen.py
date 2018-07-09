@@ -387,7 +387,7 @@ class prrdbase:
 			'GPRINT:reserved:AVERAGE:%5.1lf%s Avg,',
 			'GPRINT:reserved:MIN:%5.1lf%s Min,',
 			'GPRINT:reserved:MAX:%5.1lf%s Max,  ',
-			'GPRINT:reserved:LAST:%5.1lf%s Last',
+			'GPRINT:reserved:LAST:%5.1lf%s Last\n',
 			'LINE1:cdef-used#FF0000:Used        ',
 			'GPRINT:used:AVERAGE:%5.1lf%s Avg,',
 			'GPRINT:used:MIN:%5.1lf%s Min,  ',
