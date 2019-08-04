@@ -19,7 +19,7 @@
  # DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
  # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
  # OR OTHER DEALINGS IN THE SOFTWARE
- # 
+ #
  ##################################################################################
 
 import sys
@@ -27,6 +27,7 @@ import socket 		# hostname
 import rrdtool
 import json
 import os.path
+from datetime import datetime
 from pprint import pprint
 
 ##
@@ -35,7 +36,7 @@ from pprint import pprint
 ##
 ## Usage note: remember to use \\n for newlines, see:
 ## https://github.com/oetiker/rrdtool-1.x/issues/23
-## 
+##
 class prrdbase:
 
 	def __init__(self, filename):
@@ -78,6 +79,10 @@ class prrdbase:
 		if type == 'diskspace':
 			self.graph_df_root(time, imgfile)
 
+	def get_time(self):
+		dtobj = datetime.now()
+		return dtobj.strftime("%Y-%m-%d@%H:%M:%S")
+
 	def graph_load(self, time, imgfile):
 		"""
 		@brief      generate load graph
@@ -95,7 +100,7 @@ class prrdbase:
 			'--height', str(self.height),
 			'--start', "end - " + str(time),
 			'--end', "now",
-			'--title', 'Load averages::' + self.hostname,
+			'--title', 'Load averages / ' + self.hostname + ' / ' + self.get_time(),
 			'DEF:st=' + path + ':shortterm:AVERAGE',
 			'DEF:stmaxl=' + path + ':shortterm:MAX',
 			'DEF:mt=' + path + ':midterm:AVERAGE',
@@ -154,7 +159,7 @@ class prrdbase:
 			'--height', str(self.height),
 			'--start', "end - " + str(time),
 			'--end', "now",
-			'--title', 'CPU utilization::' + self.hostname,
+			'--title', 'CPU utilization / ' + self.hostname + ' / ' + self.get_time(),
 			'DEF:idle=' + pathb + '/cpu-idle.rrd:value:AVERAGE',
 			'DEF:nice=' + pathb + '/cpu-nice.rrd:value:AVERAGE',
 			'DEF:user=' + pathb + '/cpu-user.rrd:value:AVERAGE',
@@ -243,7 +248,7 @@ class prrdbase:
 			'--height', str(self.height),
 			'--start', 'end - ' + str(time),
 			'--end', 'now',
-			'--title', 'Memory::' + self.hostname,
+			'--title', 'Memory / ' + self.hostname + ' / ' + self.get_time(),
 			'DEF:mem_buf=' + pathb + '/memory-buffered.rrd' + ':value:AVERAGE',
 			'DEF:mem_cached=' + pathb + '/memory-cached.rrd' + ':value:AVERAGE',
 			'DEF:mem_free=' + pathb + '/memory-free.rrd' + ':value:AVERAGE',
@@ -300,7 +305,7 @@ class prrdbase:
 			'-Y',
 			'-r',
 			'-v Bytes/s',
-			'--title', interface + ' interface::' + self.hostname,
+			'--title', interface + ' interface / ' + self.hostname + ' / ' + self.get_time(),
 			'DEF:rx_max=' + pathb + ':rx:MAX',
 			'DEF:rx_avg=' + pathb + ':rx:AVERAGE',
 			'DEF:tx_max=' + pathb + ':tx:MAX',
@@ -338,7 +343,7 @@ class prrdbase:
 			'--height', str(self.height),
 			'--start', 'end - ' + str(time),
 			'--end', 'now',
-			'--title', 'Temperature::' + self.hostname,
+			'--title', 'CPU Temperature / ' + self.hostname + ' / ' + self.get_time(),
 			'-c', 'ARROW#000000',
 			'-Y',
 			'-r',
@@ -369,7 +374,7 @@ class prrdbase:
 			'--height', str(self.height),
 			'--start', 'end - ' + str(time),
 			'--end', 'now',
-			'--title', 'Disk space /::' + self.hostname,
+			'--title', 'Disk space (root) / ' + self.hostname + ' / ' + self.get_time(),
 			'-c', 'ARROW#000000',
 			'-Y',
 			'-r',
