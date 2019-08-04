@@ -331,9 +331,11 @@ class prrdbase:
 	def graph_temperature(self, time, imgfile):
 		# temperature sensors on Raspberry Pi
 		pathb = self.base_path + self.hostname + '/curl-CpuTemp/temperature-CPUTemp_switchpi.rrd'
+		rpi = True
 		if not os.path.isfile(pathb):
 			# temperature sensors on mac mini
 			pathb = self.base_path + self.hostname + '/sensors-coretemp-isa-0000/temperature-temp2.rrd'
+			rpi = False
 			if not os.path.isfile(pathb):
 				return
 		
@@ -348,14 +350,14 @@ class prrdbase:
 			'-Y',
 			'-r',
 			'-l', '30',
-			'-u', '80',
+			'-u', '80' if rpi else '120',
 			'-v Temperature',
 			'DEF:min=' + pathb + ':value:MIN',
 			'DEF:avg=' + pathb + ':value:AVERAGE',
 			'DEF:max=' + pathb + ':value:MAX',
-			'CDEF:minc=min,1000,/',
-			'CDEF:avgc=avg,1000,/',
-			'CDEF:maxc=max,1000,/',
+			'CDEF:minc=min,1000,/' if rpi else 'CDEF:minc=min',
+			'CDEF:avgc=avg,1000,/' if rpi else 'CDEF:avgc=avg',
+			'CDEF:maxc=max,1000,/' if rpi else 'CDEF:maxc=max',
 			'CDEF:ds_red=maxc,70,GT,maxc,UNKN,IF',
 			'CDEF:ds_orange=maxc,50,GT,maxc,70,GT,70,maxc,IF,UNKN,IF',
 			'CDEF:ds_green=maxc,50,GT,50,maxc,IF',
