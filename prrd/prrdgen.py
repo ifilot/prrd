@@ -324,9 +324,13 @@ class prrdbase:
 			'GPRINT:tx_total:(ca. %5.1lf%s Total)')
 
 	def graph_temperature(self, time, imgfile):
+		# temperature sensors on Raspberry Pi
 		pathb = self.base_path + self.hostname + '/curl-CpuTemp/temperature-CPUTemp_switchpi.rrd'
 		if not os.path.isfile(pathb):
-			return
+			# temperature sensors on mac mini
+			pathb = self.base_path + self.hostname + '/sensors-coretemp-isa-0000/temperature-temp2.rrd'
+			if not os.path.isfile(pathb):
+				return
 		
 		rrdtool.graph(imgfile,
 			'--imgformat', 'PNG',
