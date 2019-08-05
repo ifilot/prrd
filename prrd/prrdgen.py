@@ -48,6 +48,8 @@ class prrdbase:
 		"""
 		self.base_path = '/var/lib/collectd/rrd/'
 		self.hostname = socket.getfqdn()
+		self.hostnamelabel = self.hostname + ' - ' + self.get_os_name()
+		self.defaultfont = 'DEFAULT:8'
 
 		# load json file
 		if filename:
@@ -56,6 +58,14 @@ class prrdbase:
 
 		self.width = data['settings']['width']
 		self.height = data['settings']['height']
+
+	def get_os_name(self):
+		with open("/etc/os-release") as f:
+			d = {}
+			for line in f:
+				k,v = line.rstrip().split("=")
+				d[k] = v
+			return d['PRETTY_NAME'].strip('"')
 
 	def create_graph(self, type, time, imgfile):
 		"""
@@ -100,7 +110,8 @@ class prrdbase:
 			'--height', str(self.height),
 			'--start', "end - " + str(time),
 			'--end', "now",
-			'--title', 'Load averages / ' + self.hostname + ' / ' + self.get_time(),
+			'--font',self.defaultfont,
+			'--title', self.hostnamelabel + "\\nLoad averages @ " + self.get_time(),
 			'DEF:st=' + path + ':shortterm:AVERAGE',
 			'DEF:stmaxl=' + path + ':shortterm:MAX',
 			'DEF:mt=' + path + ':midterm:AVERAGE',
@@ -159,7 +170,8 @@ class prrdbase:
 			'--height', str(self.height),
 			'--start', "end - " + str(time),
 			'--end', "now",
-			'--title', 'CPU utilization / ' + self.hostname + ' / ' + self.get_time(),
+			'--title', self.hostnamelabel + "\\nCPU Utilization @ " + self.get_time(),
+			'--font',self.defaultfont,
 			'DEF:idle=' + pathb + '/cpu-idle.rrd:value:AVERAGE',
 			'DEF:nice=' + pathb + '/cpu-nice.rrd:value:AVERAGE',
 			'DEF:user=' + pathb + '/cpu-user.rrd:value:AVERAGE',
@@ -248,7 +260,8 @@ class prrdbase:
 			'--height', str(self.height),
 			'--start', 'end - ' + str(time),
 			'--end', 'now',
-			'--title', 'Memory / ' + self.hostname + ' / ' + self.get_time(),
+			'--title', self.hostnamelabel + "\\nMemory @ " + self.get_time(),
+			'--font',self.defaultfont,
 			'DEF:mem_buf=' + pathb + '/memory-buffered.rrd' + ':value:AVERAGE',
 			'DEF:mem_cached=' + pathb + '/memory-cached.rrd' + ':value:AVERAGE',
 			'DEF:mem_free=' + pathb + '/memory-free.rrd' + ':value:AVERAGE',
@@ -305,7 +318,8 @@ class prrdbase:
 			'-Y',
 			'-r',
 			'-v Bytes/s',
-			'--title', interface + ' interface / ' + self.hostname + ' / ' + self.get_time(),
+			'--title', self.hostnamelabel + "\\n" + interface + ' interface @' + self.get_time(),
+			'--font',self.defaultfont,
 			'DEF:rx_max=' + pathb + ':rx:MAX',
 			'DEF:rx_avg=' + pathb + ':rx:AVERAGE',
 			'DEF:tx_max=' + pathb + ':tx:MAX',
@@ -353,6 +367,7 @@ class prrdbase:
 			'-v ms',
 			'-l 0',
 			'--title', "Ping " + website + ' / ' + self.get_time(),
+			'--font',self.defaultfont,
 			'DEF:avg=' + pathb + ':value:AVERAGE',
 			'LINE1:avg#00FF00:Incoming',
 			'GPRINT:avg:AVERAGE:%5.1lf%s Avg,',
@@ -377,7 +392,8 @@ class prrdbase:
 			'--height', str(self.height),
 			'--start', 'end - ' + str(time),
 			'--end', 'now',
-			'--title', 'CPU Temperature / ' + self.hostname + ' / ' + self.get_time(),
+			'--title', self.hostnamelabel + "\\nCPU Temperature @ " + self.get_time(),
+			'--font',self.defaultfont,
 			'-c', 'ARROW#000000',
 			'-Y',
 			'-r',
@@ -408,7 +424,8 @@ class prrdbase:
 			'--height', str(self.height),
 			'--start', 'end - ' + str(time),
 			'--end', 'now',
-			'--title', 'Disk space (root) / ' + self.hostname + ' / ' + self.get_time(),
+			'--title', self.hostnamelabel + "\\nDisk Space (root) @ " + self.get_time(),
+			'--font',self.defaultfont,
 			'-c', 'ARROW#000000',
 			'-Y',
 			'-r',
