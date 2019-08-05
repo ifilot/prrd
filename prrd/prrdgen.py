@@ -111,7 +111,7 @@ class prrdbase:
 			'--start', "end - " + str(time),
 			'--end', "now",
 			'--font',self.defaultfont,
-			'--title', self.hostnamelabel + "\\nLoad averages @ " + self.get_time(),
+			'--title', self.hostnamelabel + "<br>Load averages @ " + self.get_time(),
 			'DEF:st=' + path + ':shortterm:AVERAGE',
 			'DEF:stmaxl=' + path + ':shortterm:MAX',
 			'DEF:mt=' + path + ':midterm:AVERAGE',
