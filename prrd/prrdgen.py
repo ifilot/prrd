@@ -81,7 +81,7 @@ class prrdbase:
 
 	def get_time(self):
 		dtobj = datetime.now()
-		return dtobj.strftime("%Y-%m-%d@%H:%M:%S")
+		return dtobj.strftime("%Y-%m-%d %H:%M:%S")
 
 	def graph_load(self, time, imgfile):
 		"""
@@ -328,6 +328,38 @@ class prrdbase:
 			'GPRINT:tx_avg:LAST:%5.1lf%s Last',
 			'GPRINT:tx_total:(ca. %5.1lf%s Total)')
 
+	def graph_ping(self, time, imgfile, website):
+		"""
+		@brief      generate memory usage graph
+		
+		@param      self  The object
+		@param      time  number of seconds in the past
+		@param      imgfile  url to image file
+		
+		@return     void
+		"""
+		pathb = self.base_path + self.hostname + "/ping/ping-" + website + ".rrd"
+		if not os.path.isfile(pathb):
+			return
+		rrdtool.graph(imgfile,
+			'--imgformat', 'PNG',
+			'--width', str(self.width),
+			'--height', str(self.height),
+			'--start', 'end - ' + str(time),
+			'--end', 'now',
+			'-c', 'ARROW#000000',
+			'-Y',
+			'-r',
+			'-v ms',
+			'-l 0',
+			'--title', "Ping " + website + ' / ' + self.get_time(),
+			'DEF:avg=' + pathb + ':value:AVERAGE',
+			'LINE1:avg#00FF00:Incoming',
+			'GPRINT:avg:AVERAGE:%5.1lf%s Avg,',
+			'GPRINT:avg:MIN:%5.1lf%s Min,',
+			'GPRINT:avg:MAX:%5.1lf%s Max',
+			'GPRINT:avg:LAST:%5.1lf%s Last')
+
 	def graph_temperature(self, time, imgfile):
 		# temperature sensors on Raspberry Pi
 		pathb = self.base_path + self.hostname + '/curl-CpuTemp/temperature-CPUTemp_switchpi.rrd'
@@ -393,17 +425,17 @@ class prrdbase:
 			'AREA:cdef-reserved#bfbfff',
 			'AREA:cdef-used#FFCCCC',
 			'LINE1:cdef-free#00FF00:Free',
-			'GPRINT:free:AVERAGE:       %5.1lf%s Avg,',
-			'GPRINT:free:MIN:%5.1lf%s Min,  ',
+			'GPRINT:free:AVERAGE:    %5.1lf%s Avg,',
+			'GPRINT:free:MIN:%5.1lf%s Min,',
 			'GPRINT:free:MAX:%5.1lf%s Max,',
-			'GPRINT:free:LAST:%5.1lf%s Last\n',
-			'LINE1:cdef-reserved#0000FF:Reserved   ',
+			"GPRINT:free:LAST:%5.1lf%s Last\\n",
+			'LINE1:cdef-reserved#0000FF:Reserved',
 			'GPRINT:reserved:AVERAGE:%5.1lf%s Avg,',
 			'GPRINT:reserved:MIN:%5.1lf%s Min,',
-			'GPRINT:reserved:MAX:%5.1lf%s Max,  ',
-			'GPRINT:reserved:LAST:%5.1lf%s Last\n',
-			'LINE1:cdef-used#FF0000:Used        ',
+			'GPRINT:reserved:MAX:%5.1lf%s Max,',
+			"GPRINT:reserved:LAST:%5.1lf%s Last\\n",
+			'LINE1:cdef-used#FF0000:Used    ',
 			'GPRINT:used:AVERAGE:%5.1lf%s Avg,',
-			'GPRINT:used:MIN:%5.1lf%s Min,  ',
-			'GPRINT:used:MAX:%5.1lf%s Max,  ',
-			'GPRINT:used:LAST:%5.1lf%s Last\n')
+			'GPRINT:used:MIN:%5.1lf%s Min,',
+			'GPRINT:used:MAX:%5.1lf%s Max,',
+			"GPRINT:used:LAST:%5.1lf%s Last\\n")
