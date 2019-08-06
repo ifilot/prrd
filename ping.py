@@ -34,26 +34,11 @@ from prrd import prrdgen
 # construct object
 p = prrdgen.prrdbase('settings.json')
 
-# generate load graphs
-p.create_graph('load', 86400, 'load_day.png')
-p.create_graph('load', 86400 * 7, 'load_week.png')
-
-# generate cpu usage graphs
-p.create_graph('cpu', 86400, 'cpu_day.png')
-p.create_graph('cpu', 86400 * 7, 'cpu_week.png')
-
-# generate memory usage
-p.create_graph('memory', 86400, 'memory_day.png')
-p.create_graph('memory', 86400 * 7, 'memory_week.png')
-
-# generate internet usage graphs
-interfaces = ['eno1', 'eth0', 'wlan0', 'enp4s0f0', 'enp0s25', 'enp10s0', 'wlx74da387f8eed', 'enxb827eb10dc2b']
-for interface in interfaces:
-	p.graph_internet(86400, interface + '_day.png', interface)
-	p.graph_internet(86400 * 7, interface + '_week.png', interface)
-
-# generate temperature graphs
-p.create_graph('temperature', 86400 * 7, 'temperature_week.png')
-
-# generate disk space for 100 days
-p.create_graph('diskspace', 86400 * 100, 'disk_root_100days.png')
+# generate ping websites
+websites = [
+    'zuidcoach.nl',
+    'rpi-solar.local',
+    'retropie-zolder.local',
+]
+for website in websites:
+	p.graph_ping(86400, 'ping_' + website + '.png', website)
