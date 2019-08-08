@@ -55,6 +55,9 @@ for interface in interfaces:
 # generate GPU data
 for i in range(0,10):
 	p.graph_gpu_temperature(86400, 'temperature_gpu_%02i.png' % i, i)
+	p.graph_gpu_power(86400, 'power_gpu_%02i.png' % i, i)
+	p.graph_gpu_utilization(86400, 'utilization_gpu_%02i.png' % i, i)
+	p.graph_gpu_fan(86400, 'fan_gpu_%02i.png' % i, i)
 
 # generate temperature graphs
 p.create_graph('temperature', 86400 * 7, 'temperature_week.png')
