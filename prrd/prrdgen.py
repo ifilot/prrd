@@ -237,6 +237,50 @@ class prrdbase:
 			'GPRINT:steal:MAX:%5.1lf Max,',
 			"GPRINT:steal:LAST:%5.1lf Last\\n")
 
+	def graph_gpu_temperature(self, time, imgfile, gpu_id):
+		"""
+		Output GPU temperature
+
+		time		Number of seconds to plot
+	 	imgfile 	Filename
+		gpu_id		ID of the GPU
+		"""
+		pathb = self.base_path + self.hostname + '/cuda-00000000:%02i:00.0/temperature-temperature_gpu.rrd' % gpu_id
+		rpi = True
+		if not os.path.isfile(pathb):
+			return
+
+		rrdtool.graph(imgfile,
+			'--imgformat', 'PNG',
+			'--width', str(self.width),
+			'--height', str(self.height),
+			'--start', 'end - ' + str(time),
+			'--end', 'now',
+			'--title', self.hostnamelabel + "\\nGPU Temperature @ " + self.get_time(),
+			'--font',self.defaultfont,
+			'-c', 'ARROW#000000',
+			'-Y',
+			'-r',
+			'-l', '30',
+			'-u', '80' if rpi else '120',
+			'-v Temperature',
+			'DEF:min=' + pathb.replace(':','\:') + ':value:MIN',
+			'DEF:avg=' + pathb.replace(':','\:') + ':value:AVERAGE',
+			'DEF:max=' + pathb.replace(':','\:') + ':value:MAX',
+			'CDEF:ds_red=max,70,GT,max,UNKN,IF',
+			'CDEF:ds_orange=max,50,GT,max,70,GT,70,max,IF,UNKN,IF',
+			'CDEF:ds_green=max,50,GT,50,max,IF',
+			'AREA:ds_red#FF4444',
+			'LINE1:ds_red#FF0000',
+			'AREA:ds_orange#FFD044',
+			'LINE1:ds_orange#FFB000',
+			'AREA:ds_green#CCFFCC',
+			'LINE1:ds_green#00FF00',
+			'GPRINT:avg:AVERAGE:Temperature   %5.1lf Avg,',
+			'GPRINT:avg:MIN:%5.1lf Min,',
+			'GPRINT:avg:MAX:%5.1lf Max',
+			'GPRINT:avg:LAST:%5.1lf Last')
+
 	def graph_memory(self, time, imgfile):
 		"""
 		@brief      generate memory usage graph

@@ -52,6 +52,10 @@ for interface in interfaces:
 	p.graph_internet(86400, interface + '_day.png', interface)
 	p.graph_internet(86400 * 7, interface + '_week.png', interface)
 
+# generate GPU data
+for i in range(0,10):
+	p.graph_gpu_temperature(86400, 'temperature_gpu_%02i.png' % i, i)
+
 # generate temperature graphs
 p.create_graph('temperature', 86400 * 7, 'temperature_week.png')
 
