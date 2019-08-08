@@ -246,7 +246,6 @@ class prrdbase:
 		gpu_id		ID of the GPU
 		"""
 		pathb = self.base_path + self.hostname + '/cuda-00000000:%02i:00.0/temperature-temperature_gpu.rrd' % gpu_id
-		rpi = True
 		if not os.path.isfile(pathb):
 			return
 
@@ -256,13 +255,13 @@ class prrdbase:
 			'--height', str(self.height),
 			'--start', 'end - ' + str(time),
 			'--end', 'now',
-			'--title', self.hostnamelabel + "\\nGPU Temperature @ " + self.get_time(),
+			'--title', self.hostnamelabel + "\\nTemperature @ " + self.get_time(),
 			'--font',self.defaultfont,
 			'-c', 'ARROW#000000',
 			'-Y',
 			'-r',
 			'-l', '30',
-			'-u', '80' if rpi else '120',
+			'-u', '80',
 			'-v Temperature',
 			'DEF:min=' + pathb.replace(':','\:') + ':value:MIN',
 			'DEF:avg=' + pathb.replace(':','\:') + ':value:AVERAGE',
@@ -276,12 +275,199 @@ class prrdbase:
 			'LINE1:ds_orange#FFB000',
 			'AREA:ds_green#CCFFCC',
 			'LINE1:ds_green#00FF00',
-			'GPRINT:avg:AVERAGE:Temperature   %5.1lf Avg,',
-			'GPRINT:avg:MIN:%5.1lf Min,',
-			'GPRINT:avg:MAX:%5.1lf Max',
-			'GPRINT:avg:LAST:%5.1lf Last')
+			'GPRINT:max:AVERAGE:Temperature   %5.1lf Avg,',
+			'GPRINT:max:MIN:%5.1lf Min,',
+			'GPRINT:max:MAX:%5.1lf Max',
+			'GPRINT:max:LAST:%5.1lf Last')
+
+	def graph_gpu_power(self, time, imgfile, gpu_id):
+		"""
+		Output GPU power consumption
+
+		time		Number of seconds to plot
+	 	imgfile 	Filename
+		gpu_id		ID of the GPU
+		"""
+		pathb = self.base_path + self.hostname + '/cuda-00000000:%02i:00.0/power-power_draw.rrd' % gpu_id
+		if not os.path.isfile(pathb):
+			return
+
+		rrdtool.graph(imgfile,
+			'--imgformat', 'PNG',
+			'--width', str(self.width),
+			'--height', str(self.height),
+			'--start', 'end - ' + str(time),
+			'--end', 'now',
+			'--title', self.hostnamelabel + "\\nPower consumption @ " + self.get_time(),
+			'--font',self.defaultfont,
+			'-c', 'ARROW#000000',
+			'-Y',
+			'-r',
+			'-l', '0',
+			'-u', '200',
+			'-v Power',
+			'DEF:min=' + pathb.replace(':','\:') + ':value:MIN',
+			'DEF:avg=' + pathb.replace(':','\:') + ':value:AVERAGE',
+			'DEF:max=' + pathb.replace(':','\:') + ':value:MAX',
+			'CDEF:ds_red=max,150,GT,max,UNKN,IF',
+			'CDEF:ds_orange=max,50,GT,max,150,GT,150,max,IF,UNKN,IF',
+			'CDEF:ds_green=max,50,GT,50,max,IF',
+			'AREA:ds_red#FF4444',
+			'LINE1:ds_red#FF0000',
+			'AREA:ds_orange#FFD044',
+			'LINE1:ds_orange#FFB000',
+			'AREA:ds_green#CCFFCC',
+			'LINE1:ds_green#00FF00',
+			'GPRINT:max:AVERAGE:Power   %5.1lf Avg,',
+			'GPRINT:max:MIN:%5.1lf Min,',
+			'GPRINT:max:MAX:%5.1lf Max',
+			'GPRINT:max:LAST:%5.1lf Last')
+
+	def graph_gpu_utilization(self, time, imgfile, gpu_id):
+		"""
+		Output GPU power consumption
+
+		time		Number of seconds to plot
+	 	imgfile 	Filename
+		gpu_id		ID of the GPU
+		"""
+		pathb = self.base_path + self.hostname + '/cuda-00000000:%02i:00.0/percent-utilization_gpu.rrd' % gpu_id
+		if not os.path.isfile(pathb):
+			return
+
+		rrdtool.graph(imgfile,
+			'--imgformat', 'PNG',
+			'--width', str(self.width),
+			'--height', str(self.height),
+			'--start', 'end - ' + str(time),
+			'--end', 'now',
+			'--title', self.hostnamelabel + "\\nUtilization @ " + self.get_time(),
+			'--font',self.defaultfont,
+			'-c', 'ARROW#000000',
+			'-Y',
+			'-r',
+			'-l', '0',
+			'-u', '100',
+			'-v Utilization',
+			'DEF:min=' + pathb.replace(':','\:') + ':value:MIN',
+			'DEF:avg=' + pathb.replace(':','\:') + ':value:AVERAGE',
+			'DEF:max=' + pathb.replace(':','\:') + ':value:MAX',
+			'CDEF:ds_red=max,90,GT,max,UNKN,IF',
+			'CDEF:ds_orange=max,50,GT,max,90,GT,90,max,IF,UNKN,IF',
+			'CDEF:ds_green=max,50,GT,50,max,IF',
+			'AREA:ds_red#FF4444',
+			'LINE1:ds_red#FF0000',
+			'AREA:ds_orange#FFD044',
+			'LINE1:ds_orange#FFB000',
+			'AREA:ds_green#CCFFCC',
+			'LINE1:ds_green#00FF00',
+			'GPRINT:max:AVERAGE:Utilization   %5.1lf Avg,',
+			'GPRINT:max:MIN:%5.1lf Min,',
+			'GPRINT:max:MAX:%5.1lf Max',
+			'GPRINT:max:LAST:%5.1lf Last')
+
+	def graph_gpu_fan(self, time, imgfile, gpu_id):
+		"""
+		Output GPU power consumption
+
+		time		Number of seconds to plot
+	 	imgfile 	Filename
+		gpu_id		ID of the GPU
+		"""
+		pathb = self.base_path + self.hostname + '/cuda-00000000:%02i:00.0/percent-fan_speed.rrd' % gpu_id
+		if not os.path.isfile(pathb):
+			return
+
+		rrdtool.graph(imgfile,
+			'--imgformat', 'PNG',
+			'--width', str(self.width),
+			'--height', str(self.height),
+			'--start', 'end - ' + str(time),
+			'--end', 'now',
+			'--title', self.hostnamelabel + "\\nFan speed @ " + self.get_time(),
+			'--font',self.defaultfont,
+			'-c', 'ARROW#000000',
+			'-Y',
+			'-r',
+			'-l', '0',
+			'-u', '100',
+			'-v Utilization',
+			'DEF:min=' + pathb.replace(':','\:') + ':value:MIN',
+			'DEF:avg=' + pathb.replace(':','\:') + ':value:AVERAGE',
+			'DEF:max=' + pathb.replace(':','\:') + ':value:MAX',
+			'CDEF:ds_red=max,90,GT,max,UNKN,IF',
+			'CDEF:ds_orange=max,50,GT,max,90,GT,90,max,IF,UNKN,IF',
+			'CDEF:ds_green=max,50,GT,50,max,IF',
+			'AREA:ds_red#FF4444',
+			'LINE1:ds_red#FF0000',
+			'AREA:ds_orange#FFD044',
+			'LINE1:ds_orange#FFB000',
+			'AREA:ds_green#CCFFCC',
+			'LINE1:ds_green#00FF00',
+			'GPRINT:max:AVERAGE:Utilization   %5.1lf Avg,',
+			'GPRINT:max:MIN:%5.1lf Min,',
+			'GPRINT:max:MAX:%5.1lf Max',
+			'GPRINT:max:LAST:%5.1lf Last')
 
 	def graph_memory(self, time, imgfile):
+		"""
+		@brief      generate memory usage graph
+		
+		@param      self  The object
+		@param      time  number of seconds in the past
+		@param      imgfile  url to image file
+		
+		@return     void
+		"""
+		pathb = self.base_path + self.hostname + "/memory"
+		rrdtool.graph(imgfile,
+			'--imgformat', 'PNG',
+			'-c', 'ARROW#000000',
+			'-Y',
+			'-r',
+			'-l', '0',
+			'-L', '5',
+			'-v', 'Memory [bytes]',
+			'--width', str(self.width),
+			'--height', str(self.height),
+			'--start', 'end - ' + str(time),
+			'--end', 'now',
+			'--title', self.hostnamelabel + "\\nMemory @ " + self.get_time(),
+			'--font',self.defaultfont,
+			'DEF:mem_buf=' + pathb + '/memory-buffered.rrd' + ':value:AVERAGE',
+			'DEF:mem_cached=' + pathb + '/memory-cached.rrd' + ':value:AVERAGE',
+			'DEF:mem_free=' + pathb + '/memory-free.rrd' + ':value:AVERAGE',
+			'DEF:mem_used=' + pathb + '/memory-used.rrd' + ':value:AVERAGE',
+			'CDEF:mem_buf_add=mem_buf,UN,0,mem_buf,IF,mem_used,+',
+			'CDEF:mem_cached_add=mem_cached,UN,0,mem_cached,IF,mem_buf_add,+',
+			'CDEF:mem_free_add=mem_free,UN,0,mem_free,IF,mem_cached_add,+',
+			'TEXTALIGN:left',
+			'AREA:mem_free_add#CCFFCC',
+			'AREA:mem_cached_add#CCCCFF',
+			'AREA:mem_buf_add#f3dfb7',
+			'AREA:mem_used#FFCCCC',
+			'LINE1:mem_free_add#00FF00:Free',
+			'GPRINT:mem_free:AVERAGE:        %5.1lf%s Avg,',
+			'GPRINT:mem_free:MIN:%5.1lf%s Min,',
+			'GPRINT:mem_free:MAX:%5.1lf%s Max,',
+			"GPRINT:mem_free:LAST:%5.1lf%s Last\\n",
+			'LINE1:mem_cached_add#0000FF:Page cache',
+			'GPRINT:mem_cached:AVERAGE:  %5.1lf%s Avg,',
+			'GPRINT:mem_cached:MIN:%5.1lf%s Min,',
+			'GPRINT:mem_cached:MAX:%5.1lf%s Max,',
+			'GPRINT:mem_cached:LAST:%5.1lf%s Last',
+			'LINE1:mem_buf_add#f0a000:Buffer cache',
+			'GPRINT:mem_buf:AVERAGE:%5.1lf%s Avg,',
+			'GPRINT:mem_buf:MIN:%5.1lf%s Min,',
+			'GPRINT:mem_buf:MAX:%5.1lf%s Max,',
+			"GPRINT:mem_buf:LAST:%5.1lf%s Last\\n",
+			'LINE1:mem_used#FF0000:Used',
+			'GPRINT:mem_used:AVERAGE:        %5.1lf%s Avg,',
+			'GPRINT:mem_used:MIN:%5.1lf%s Min,',
+			'GPRINT:mem_used:MAX:%5.1lf%s Max,',
+			"GPRINT:mem_used:LAST:%5.1lf%s Last\\n")
+
+	def graph_utilization(self, time, imgfile):
 		"""
 		@brief      generate memory usage graph
 		
