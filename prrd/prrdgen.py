@@ -689,6 +689,8 @@ class prrdbase:
 
 	def graph_df(self, time, imgfile, partition):
 		pathb = self.base_path + self.hostname + '/df-' + partition
+		if not os.path.isfile(pathb + '/df_complex-free.rrd'):
+			return
 		rrdtool.graph(imgfile,
 			'--imgformat', 'PNG',
 			'--width', str(self.width),
