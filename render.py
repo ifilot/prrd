@@ -68,4 +68,4 @@ p.create_graph('diskspace', 86400 * 100, 'disk_root_100days.png')
 # generate disk space for other partitions
 partitions = ['storage-disk1']
 for partition in partitions:
-	p.graph_df(86400, 'disk_%s_100days.png' % partition, partition)
+	p.graph_df(86400 * 100, 'disk_%s_100days.png' % partition, partition)
