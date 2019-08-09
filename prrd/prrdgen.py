@@ -602,11 +602,13 @@ class prrdbase:
 			'--title', "Ping " + website + ' / ' + self.get_time(),
 			'--font',self.defaultfont,
 			'DEF:avg=' + pathb + ':value:AVERAGE',
-			'LINE1:avg#00FF00:Incoming',
-			'GPRINT:avg:AVERAGE:%5.1lf%s Avg,',
-			'GPRINT:avg:MIN:%5.1lf%s Min,',
-			'GPRINT:avg:MAX:%5.1lf%s Max',
-			'GPRINT:avg:LAST:%5.1lf%s Last')
+			'DEF:max=' + pathb + ':value:MAX',
+			'AREA:avg#AAAAFF',
+			'LINE1:avg#0000FF:Ping',
+			'GPRINT:avg:AVERAGE:%3.1lf%s Avg,',
+			'GPRINT:avg:MIN:%3.1lf%s Min,',
+			'GPRINT:avg:MAX:%3.1lf%s Max',
+			'GPRINT:avg:LAST:%3.1lf%s Last')
 
 	def graph_temperature(self, time, imgfile):
 		# temperature sensors on Raspberry Pi
