@@ -73,7 +73,8 @@ for partition in partitions:
 
 # create any ping websites
 path = p.get_rrd_root() + "/ping"
-for filename in os.listdir(path):
-	if filename.startswith("ping-") and filename.endswith(".rrd"):
-		website = filename[5:-4]
-		p.graph_ping(86400 * 7, 'ping_%s_week.png' % website, website)
+if os.path.isdir(path):
+	for filename in os.listdir(path):
+		if filename.startswith("ping-") and filename.endswith(".rrd"):
+			website = filename[5:-4]
+			p.graph_ping(86400 * 7, 'ping_%s_week.png' % website, website)
