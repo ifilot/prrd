@@ -644,7 +644,11 @@ class prrdbase:
 			'AREA:ds_orange#FFD044',
 			'LINE1:ds_orange#FFB000',
 			'AREA:ds_green#CCFFCC',
-			'LINE1:ds_green#00FF00')
+			'LINE1:ds_green#00FF00',
+			'GPRINT:max:AVERAGE:Temperature   %5.1lf Avg,',
+			'GPRINT:max:MIN:%5.1lf Min,',
+			'GPRINT:max:MAX:%5.1lf Max',
+			'GPRINT:max:LAST:%5.1lf Last')
 
 	def graph_df_root(self, time, imgfile):
 		pathb = self.base_path + self.hostname + '/df-root'
