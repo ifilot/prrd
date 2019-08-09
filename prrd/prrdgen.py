@@ -615,7 +615,7 @@ class prrdbase:
 			rpi = False
 			if not os.path.isfile(pathb):
 				return
-		
+
 		rrdtool.graph(imgfile,
 			'--imgformat', 'PNG',
 			'--width', str(self.width),
@@ -655,6 +655,47 @@ class prrdbase:
 			'--start', 'end - ' + str(time),
 			'--end', 'now',
 			'--title', self.hostnamelabel + "\\nDisk Space (root) @ " + self.get_time(),
+			'--font',self.defaultfont,
+			'-c', 'ARROW#000000',
+			'-Y',
+			'-r',
+			'-l', '0',
+			'-L', '5',
+			'-v', 'Space',
+			'DEF:free=' + pathb + '/df_complex-free.rrd:value:AVERAGE',
+			'DEF:reserved=' + pathb + '/df_complex-reserved.rrd:value:AVERAGE',
+			'DEF:used=' + pathb + '/df_complex-used.rrd:value:AVERAGE',
+			'CDEF:cdef-used=used,UN,0,used,IF',
+			'CDEF:cdef-reserved=reserved,UN,0,reserved,IF,cdef-used,+',
+			'CDEF:cdef-free=free,UN,0,free,IF,cdef-reserved,+',
+			'AREA:cdef-free#bff7bf',
+			'AREA:cdef-reserved#bfbfff',
+			'AREA:cdef-used#FFCCCC',
+			'LINE1:cdef-free#00FF00:Free',
+			'GPRINT:free:AVERAGE:    %5.1lf%s Avg,',
+			'GPRINT:free:MIN:%5.1lf%s Min,',
+			'GPRINT:free:MAX:%5.1lf%s Max,',
+			"GPRINT:free:LAST:%5.1lf%s Last\\n",
+			'LINE1:cdef-reserved#0000FF:Reserved',
+			'GPRINT:reserved:AVERAGE:%5.1lf%s Avg,',
+			'GPRINT:reserved:MIN:%5.1lf%s Min,',
+			'GPRINT:reserved:MAX:%5.1lf%s Max,',
+			"GPRINT:reserved:LAST:%5.1lf%s Last\\n",
+			'LINE1:cdef-used#FF0000:Used    ',
+			'GPRINT:used:AVERAGE:%5.1lf%s Avg,',
+			'GPRINT:used:MIN:%5.1lf%s Min,',
+			'GPRINT:used:MAX:%5.1lf%s Max,',
+			"GPRINT:used:LAST:%5.1lf%s Last\\n")
+
+	def graph_df(self, time, imgfile, partition):
+		pathb = self.base_path + self.hostname + '/df-' + partition
+		rrdtool.graph(imgfile,
+			'--imgformat', 'PNG',
+			'--width', str(self.width),
+			'--height', str(self.height),
+			'--start', 'end - ' + str(time),
+			'--end', 'now',
+			'--title', self.hostnamelabel + "\\nDisk Space (%s) @ " % partition + self.get_time(),
 			'--font',self.defaultfont,
 			'-c', 'ARROW#000000',
 			'-Y',
