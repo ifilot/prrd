@@ -89,6 +89,9 @@ class prrdbase:
 		if type == 'diskspace':
 			self.graph_df_root(time, imgfile)
 
+	def get_rrd_root(self):
+		return self.base_path + self.hostname
+
 	def get_time(self):
 		dtobj = datetime.now()
 		return dtobj.strftime("%Y-%m-%d %H:%M:%S")

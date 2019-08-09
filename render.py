@@ -22,6 +22,7 @@
  #
  ##################################################################################
 
+import os
 from prrd import prrdgen
 
 #
@@ -69,3 +70,10 @@ p.create_graph('diskspace', 86400 * 100, 'disk_root_100days.png')
 partitions = ['storage-disk1', 'storage']
 for partition in partitions:
 	p.graph_df(86400 * 100, 'disk_%s_100days.png' % partition, partition)
+
+# create any ping websites
+path = p.get_rrd_root() + "/ping"
+for filename in os.listdir(path):
+	if filename.startswith("ping-") and filename.endswith(".rrd"):
+		website = filename[5:-4]
+		p.graph_ping(86400 * 7, 'ping_%s_week.png' % website, website)
