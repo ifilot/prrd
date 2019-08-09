@@ -67,7 +67,7 @@ p.create_graph('temperature', 86400 * 7, 'temperature_week.png')
 p.create_graph('diskspace', 86400 * 100, 'disk_root_100days.png')
 
 # generate disk space for other partitions
-partitions = ['storage-disk1', 'storage']
+partitions = ['storage-disk1', 'storage', '/dev/md0']
 for partition in partitions:
 	p.graph_df(86400 * 100, 'disk_%s_100days.png' % partition, partition)
 
