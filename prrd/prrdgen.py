@@ -802,7 +802,7 @@ class prrdbase:
 			'--font',self.defaultfont,
 			'DEF:ban=' + pathb + 'counter-fail2ban-ban.rrd:value:AVERAGE',
 			'DEF:unban=' + pathb + 'counter-fail2ban-unban.rrd:value:AVERAGE',
-			'LINE1:ban#FF0000:Ban       ',
+			'LINE1:ban#FF0000:Ban     ',
 			'GPRINT:ban:AVERAGE:%3.1lf%s Avg,',
 			'GPRINT:ban:MIN:%3.1lf%s Min,',
 			'GPRINT:ban:MAX:%3.1lf%s Max',
@@ -811,4 +811,4 @@ class prrdbase:
 			'GPRINT:unban:AVERAGE:%3.1lf%s Avg,',
 			'GPRINT:unban:MIN:%3.1lf%s Min,',
 			'GPRINT:unban:MAX:%3.1lf%s Max',
-			'GPRINT:unban:LAST:%3.1lf%s Last')
+			"GPRINT:unban:LAST:%3.1lf%s Last\\n")
