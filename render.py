@@ -78,3 +78,7 @@ if os.path.isdir(path):
 		if filename.startswith("ping-") and filename.endswith(".rrd"):
 			website = filename[5:-4]
 			p.graph_ping(86400 * 7, 'ping_%s_week.png' % website, website)
+
+# invalid user logins and fail2ban
+p.graph_ssh_invalid_user(86400 * 7, 'ssh_invalid.png')
+p.graph_fail2ban(86400 * 7, 'fail2ban.png')

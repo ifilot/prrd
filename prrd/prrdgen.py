@@ -738,3 +738,77 @@ class prrdbase:
 			'GPRINT:used:MIN:%5.1lf%s Min,',
 			'GPRINT:used:MAX:%5.1lf%s Max,',
 			"GPRINT:used:LAST:%5.1lf%s Last\\n")
+
+	def graph_ssh_invalid_user(self, time, imgfile):
+		"""
+		@brief      generate memory usage graph
+		
+		@param      self  The object
+		@param      time  number of seconds in the past
+		@param      imgfile  url to image file
+		
+		@return     void
+		"""
+		pathb = self.base_path + self.hostname + "/tail-auth/counter-sshd-invalid_user.rrd"
+		if not os.path.isfile(pathb):
+			return
+		rrdtool.graph(imgfile,
+			'--imgformat', 'PNG',
+			'--width', str(self.width),
+			'--height', str(self.height),
+			'--start', 'end - ' + str(time),
+			'--end', 'now',
+			'-c', 'ARROW#000000',
+			'-Y',
+			'-r',
+			'-v attempts',
+			'-l 0',
+			'--title', "Invalid sshd login " + self.hostname + ' / ' + self.get_time(),
+			'--font',self.defaultfont,
+			'DEF:avg=' + pathb + ':value:AVERAGE',
+			'DEF:max=' + pathb + ':value:MAX',
+			'AREA:avg#AAAAFF',
+			'LINE1:avg#0000FF:Invalid logins',
+			'GPRINT:avg:AVERAGE:%3.1lf%s Avg,',
+			'GPRINT:avg:MIN:%3.1lf%s Min,',
+			'GPRINT:avg:MAX:%3.1lf%s Max',
+			'GPRINT:avg:LAST:%3.1lf%s Last')
+
+	def graph_fail2ban(self, time, imgfile):
+		"""
+		@brief      generate memory usage graph
+		
+		@param      self  The object
+		@param      time  number of seconds in the past
+		@param      imgfile  url to image file
+		
+		@return     void
+		"""
+		pathb = self.base_path + self.hostname + "/tail-fail2ban/"
+		if not os.path.isdir(pathb):
+			return
+		rrdtool.graph(imgfile,
+			'--imgformat', 'PNG',
+			'--width', str(self.width),
+			'--height', str(self.height),
+			'--start', 'end - ' + str(time),
+			'--end', 'now',
+			'-c', 'ARROW#000000',
+			'-Y',
+			'-r',
+			'-v attempts',
+			'-l 0',
+			'--title', "Invalid sshd login " + self.hostname + ' / ' + self.get_time(),
+			'--font',self.defaultfont,
+			'DEF:ban=' + pathb + 'counter-fail2ban-ban.rrd:value:AVERAGE',
+			'DEF:unban=' + pathb + 'counter-fail2ban-unban.rrd:value:AVERAGE',
+			'LINE1:ban#FF0000:Ban   ',
+			'GPRINT:ban:AVERAGE:%3.1lf%s Avg,',
+			'GPRINT:ban:MIN:%3.1lf%s Min,',
+			'GPRINT:ban:MAX:%3.1lf%s Max',
+		        "GPRINT:ban:LAST:%3.1lf%s Last\\n",
+			'LINE1:unban#00CC00:Unban   ',
+			'GPRINT:unban:AVERAGE:%3.1lf%s Avg,',
+			'GPRINT:unban:MIN:%3.1lf%s Min,',
+			'GPRINT:unban:MAX:%3.1lf%s Max',
+			'GPRINT:unban:LAST:%3.1lf%s Last')
